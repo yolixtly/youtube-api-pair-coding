@@ -2,56 +2,47 @@
 $(function() {
 
     //STEP 1 : get the data from API youtube 
-    function getData() {
+    function getData(searchTerm) {
         var url = 'https://www.googleapis.com/youtube/v3/search/';
         var params = {
             part: 'snippet',
             key: 'AIzaSyCQQNC20CuEMQVuJSe-NVyZ9NXZHUbWlgc',
-            q: 'cats', //searchTerm here
+            q: searchTerm,
             maxResults: 10
         };
 
         $.getJSON(url, params, function(data) {
-        	//STEP 2 : Analize the API Data  
-        	// alert('hi');
-           console.log(data);
-            showData(data);
+            //STEP 2 : Analize the API Data  
+            console.log(data.items);
+            showData(data.items);
         });
     }
 
-    // on click call this function
-  
-getData();
-
     // STEP 3 : Show/render it to HTML 
-    function showData(result){
+    function showData(result) {
         var html = '';
-        console.log('out of loop: ' + result.items[0].snippet.thumbnails.high.url);
-        $.each(result, function(value, key) {
-        	console.log('inside loop: ' + value.snippet.thumbnails.high.url);
-            // html += '<img src="' + value.snippet.thumbnails.high.url  + '" class="col-xs-12 col-md-4 img-responsive">'
-            // $("#resultsContainer").append(html);
+
+        $.each(result, function(index, value) {
+            html += '<a href="https://www.youtube.com/watch?v='+ value.id.videoId + ' "> <img src="' + 
+            value.snippet.thumbnails.high.url + '" class="col-xs-12 col-md-4 img-responsive"></a> <h5>'+ 
+            value.snippet.title +'</h5>';
         });
-        // console.log(html);
+        $("#resultsContainer").append(html);
     }
 
     //STEP 4 : Create an Event handler 
     //that on click calls our data and Show Data functions
 
-   $('#submit').on('click', function(e){
-   		e.preventDefault;
-   		var searchTerm = $('#searchTerm').val();
-   		alert(searchTerm);
-   		// getData(searchTerm);
-   });
+    $('form').submit(function(e) {
+        e.preventDefault();
+        var searchTerm = $('#searchTerm').val();
+        console.log(searchTerm);
+        getData(searchTerm);
+        $('#searchTerm').val('');
+
+        //alert(searchTerm);
+
+    });
 
 });
-
-
 //STEP 5 : Work with design
-
-
-
-
-
-
